@@ -1,0 +1,20 @@
+{
+    "Donald Pinckney": {
+        "problem1": {
+            "test1": {
+                "code": 0,
+                "time": "0.4"
+            }
+        },
+        "problem2": {
+            "test1": {
+                "code": 1,
+                "time": "1.2"
+            },
+            "test2": {
+                "code": 2,
+                "time": "1.3"
+            }
+        }
+    }
+}
