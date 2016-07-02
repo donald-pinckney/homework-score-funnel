@@ -45,7 +45,8 @@ function sendToGithub(model) {
     for(var name in model) {
         var row = "|" + name + "|";
         var nameResults = model[name];
-
+        
+        var correctCount = 0;
         var colIndex = 0;
         var problemNum = 1;
         while(true) {
@@ -68,6 +69,7 @@ function sendToGithub(model) {
                
                 var codeText = "";
                 if(code == 0) {
+                    correctCount++;
                     codeText = "**Correct** :+1:";
                 } else if(code == 1) {
                     codeText = "*Incorrect* :sob:";
@@ -79,7 +81,7 @@ function sendToGithub(model) {
                     codeText = "*Runtime error* :bomb:";
                 }
 
-                row += codeText + ", " + time + "|";
+                row += codeText + "<br /> " + time + "|";
 
                 colIndex++;
                 testNum++;
@@ -87,6 +89,7 @@ function sendToGithub(model) {
 
             problemNum++;
         }
+        row += correctCount + "|";
 
         rows += row + "\n"
     }
@@ -95,10 +98,14 @@ function sendToGithub(model) {
     for(var colIdx in cols) {
         table += cols[colIdx] + "|";
     }
+    table += "Total Correct|";
+
     table += "\n|---|";
     for(var col in cols) {
         table += "---|";
     }
+    table += "---|";
+
     table += "\n" + rows;
 
     var newReadme = basicREADME.replace("<#SCORES_TABLE#>", table);
