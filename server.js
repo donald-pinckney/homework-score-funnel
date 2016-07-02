@@ -2,6 +2,7 @@ const http = require('http');
 const qs = require('querystring');
 const fs = require('fs');
 const exec = require('child_process').exec;
+const moment = require('moment-timezone');
 
 const hostname = '198.23.128.60';
 const port = 80;
@@ -45,7 +46,8 @@ function sendToGithub(model) {
     for(var name in model) {
         var row = "|" + name + "|";
         var nameResults = model[name];
-        
+        row += nameResults.last_updated + "|";
+
         var correctCount = 0;
         var colIndex = 0;
         var problemNum = 1;
@@ -62,7 +64,7 @@ function sendToGithub(model) {
                     break;
                 }
 
-                cols[colIndex] = "Problem " + problemNum + ", Test " + testNum;
+                cols[colIndex] = "Problem " + problemNum + ",<br />Test " + testNum;
                 // Parse problem and test
                 var code = problemResults["test" + testNum]["code"];
                 var time = problemResults["test" + testNum]["time"];
@@ -94,13 +96,13 @@ function sendToGithub(model) {
         rows += row + "\n"
     }
 
-    var table = "|Name|";
+    var table = "|Name|Last Updated|";
     for(var colIdx in cols) {
         table += cols[colIdx] + "|";
     }
     table += "Total Correct|";
 
-    table += "\n|---|";
+    table += "\n|---|---|";
     for(var col in cols) {
         table += "---|";
     }
@@ -118,6 +120,8 @@ function handleHomeworkInput(input) {
     if(data === undefined) {
         data = {};
     }
+
+    data.last_updated = moment().tz('America/Los_Angeles').format('h:mm:ss a,<br />MMM D') 
 
     var problemNum = 1;
     while(true) {
@@ -154,7 +158,7 @@ function handleHomeworkInput(input) {
 
     model[name] = data;
     writeModelToDisk(model);
-    sendToGithub(model);
+    sendToGithub(model, name);
 }
 
 const server = http.createServer(function(req, res) {
